@@ -1,0 +1,19 @@
+.root {
+  width: 100%;
+  max-width: rem(350);
+  display: flex;
+  flex-direction: column;
+  gap: rem(8);
+  padding-inline: rem(24);
+  padding-block: rem(16);
+  background-color: #cfcfc4;
+  border: none;
+  border-radius: rem(16);
+}
+
+.columnHeader {
+  display: flex;
+  text-align: center;
+  justify-content: flex-start;
+  gap: rem(18);
+}

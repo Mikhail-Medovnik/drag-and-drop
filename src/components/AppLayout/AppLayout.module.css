@@ -1,0 +1,24 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--mantine-color-background-color-6);
+}
+
+.header {
+  flex: 0 1;
+  text-align: center;
+  padding-block: rem(32);
+  border-bottom: 3px solid var(--mantine-color-main-color-6);
+}
+
+.title {
+  font-weight: 700;
+  font-size: rem(48);
+  color: var(--mantine-color-main-color-6);
+}
+
+.main {
+  flex: 1 1;
+}
