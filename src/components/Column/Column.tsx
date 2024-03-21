@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import {
   Box,
   Stack,
@@ -7,9 +8,13 @@ import {
   rem,
 } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import { useGrocery } from "@/context/GroceryContext/GroceryContext";
+import {
+  GroceryType,
+  useGrocery,
+} from "@/context/GroceryContext/GroceryContext";
 
 import classes from "./Column.module.css";
+import { capitalizeWord } from "@/utils/capitalize-word";
 
 interface ColumnProps {
   children?: React.ReactNode;
@@ -17,7 +22,37 @@ interface ColumnProps {
 }
 
 export const Column = ({ children, title, ...other }: ColumnProps) => {
+  const [inputError, setInputError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const list = useGrocery();
+  const { contextState, setContextState } = list;
+
+  const handleAddClick = (arr: GroceryType[]) => {
+    setInputError("");
+    const inputValue = inputRef.current?.value;
+
+    if (!inputValue) {
+      setInputError("Field should not be empty");
+      return;
+    }
+
+    if (arr.some((item) => item.id === inputValue.toLowerCase())) {
+      setInputError("Item name should be unique");
+      return;
+    }
+
+    const newItem: GroceryType = {
+      name: capitalizeWord(inputValue),
+      id: inputValue.toLowerCase(),
+    };
+
+    const newArr = [...arr, newItem];
+    inputRef.current.value = "";
+    setContextState(newArr);
+
+    return;
+  };
+
   return (
     <Box className={classes.root} {...other}>
       <Box className={classes.columnHeader}>
@@ -41,15 +76,19 @@ export const Column = ({ children, title, ...other }: ColumnProps) => {
       </Stack>
 
       {title === "Buy" && (
-        <Stack gap={rem(16)}>
+        <Stack gap={inputError ? rem(32) : rem(16)}>
           <TextInput
+            ref={inputRef}
             h={rem(45)}
+            error={inputError || undefined}
             placeholder="Add new item"
             classNames={{ input: classes.input, wrapper: classes.inputWrapper }}
           />
           <UnstyledButton
             className={classes.button}
-            onClick={() => console.log(list.contextState)}
+            onClick={() => {
+              handleAddClick(contextState);
+            }}
           >
             Add
           </UnstyledButton>
