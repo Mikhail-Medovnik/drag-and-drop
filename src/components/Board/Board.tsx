@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useRef, useState } from "react";
 import { Box, Container, rem } from "@mantine/core";
 import { Column } from "../Column/Column";
 import {
@@ -18,6 +18,8 @@ export function Board() {
   const context = useGrocery();
   const { setContextState } = context;
   const dragItems = context.contextState;
+
+  const draggableRef = useRef(null);
 
   const handleDragAndDrop = (result: DropResult) => {
     const { source, destination, type } = result;
