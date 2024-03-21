@@ -7,6 +7,7 @@ import {
   rem,
 } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
+import { useGrocery } from "@/context/GroceryContext/GroceryContext";
 
 import classes from "./Column.module.css";
 
@@ -15,7 +16,8 @@ interface ColumnProps {
   title: "Buy" | "Bought";
 }
 
-export function Column({ children, title, ...other }: ColumnProps) {
+export const Column = ({ children, title, ...other }: ColumnProps) => {
+  const list = useGrocery();
   return (
     <Box className={classes.root} {...other}>
       <Box className={classes.columnHeader}>
@@ -43,11 +45,16 @@ export function Column({ children, title, ...other }: ColumnProps) {
           <TextInput
             h={rem(45)}
             placeholder="Add new item"
-            classNames={{ input: classes.input }}
+            classNames={{ input: classes.input, wrapper: classes.inputWrapper }}
           />
-          <UnstyledButton className={classes.button}>Add</UnstyledButton>
+          <UnstyledButton
+            className={classes.button}
+            onClick={() => console.log(list.contextState)}
+          >
+            Add
+          </UnstyledButton>
         </Stack>
       )}
     </Box>
   );
-}
+};

@@ -1,6 +1,6 @@
 import { Text, UnstyledButton } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import type { GroceryType } from "../../../mock-data/groceries";
+import { GroceryType } from "@/context/GroceryContext/GroceryContext";
 
 import classes from "./GroceryItem.module.css";
 
