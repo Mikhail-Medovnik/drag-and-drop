@@ -1,9 +1,27 @@
 .root {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   border: solid 2px #1f1f1f;
   border-radius: 0.2em;
   padding: 0.5em 0.8em 0.5em 0.5em;
-  margin-bottom: 0.5em;
   width: 100%;
+}
+
+.removeButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @mixin hover {
+    .trashIcon {
+      color: #ed6e84;
+    }
+  }
+}
+
+.trashIcon {
+  color: rgba(54, 69, 79, 0.7);
+  transition: color 300ms ease;
+  pointer-events: none;
 }

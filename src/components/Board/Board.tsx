@@ -1,4 +1,4 @@
-import { Box, Container, SimpleGrid } from "@mantine/core";
+import { Box, Container } from "@mantine/core";
 import { Column } from "../Column/Column";
 import type { GroceryType } from "../../../mock-data/groceries";
 import { initial_list } from "../../../mock-data/groceries";
@@ -21,11 +21,7 @@ export function Board() {
       <Box className={classes.boardLayout}>
         <Column title="Buy">{items}</Column>
 
-        <Column title="Bought">
-          <div>1</div>
-          <div>2</div>
-          <div>3</div>
-        </Column>
+        <Column title="Bought"></Column>
       </Box>
     </Container>
   );

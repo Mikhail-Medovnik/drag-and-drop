@@ -4,11 +4,11 @@ export interface GroceryType {
 }
 
 export const initial_list = [
-  { id: "1", name: "Apples" },
-  { id: "2", name: "Milk" },
-  { id: "3", name: "Bread" },
-  { id: "4", name: "Eggs" },
-  { id: "5", name: "Chicken" },
-  { id: "6", name: "Rice" },
-  { id: "7", name: "Spinach" },
+  { id: "apples", name: "Apples" },
+  { id: "milk", name: "Milk" },
+  { id: "bread", name: "Bread" },
+  { id: "eggs", name: "Eggs" },
+  { id: "chicken", name: "Chicken" },
+  { id: "rice", name: "Rice" },
+  { id: "pinach", name: "Spinach" },
 ];
