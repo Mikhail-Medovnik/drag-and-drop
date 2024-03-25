@@ -1,21 +1,17 @@
 import React from "react";
 import { ReactNode, createContext, useContext, useState } from "react";
-
-export interface GroceryType {
-  id: string;
-  name: string;
-}
+import { InitialColumnsData } from "@/App";
 
 interface Context {
-  contextState: GroceryType[];
-  setContextState: React.Dispatch<React.SetStateAction<GroceryType[]>>;
+  contextState: InitialColumnsData;
+  setContextState: React.Dispatch<React.SetStateAction<InitialColumnsData>>;
 }
 
 export const GroceryContext = createContext<Context | null>(null);
 
 interface GroceryProviderProps {
   children: ReactNode;
-  value: GroceryType[];
+  value: InitialColumnsData;
 }
 
 export const GroceryProvider = ({ children, value }: GroceryProviderProps) => {

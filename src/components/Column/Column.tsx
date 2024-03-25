@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import {
   Box,
+  ListItem,
   Stack,
   Text,
   TextInput,
@@ -8,53 +9,54 @@ import {
   rem,
 } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
-import {
-  GroceryType,
-  useGrocery,
-} from "@/context/GroceryContext/GroceryContext";
+import { useGrocery } from "@/context/GroceryContext/GroceryContext";
+import { GroceryItem, GroceryType } from "../GroceryItem/GroceryItem";
 
 import classes from "./Column.module.css";
 import { capitalizeWord } from "@/utils/capitalize-word";
+import { Droppable } from "react-beautiful-dnd";
 
-interface ColumnProps {
-  children?: React.ReactNode;
+export interface ColumnProps {
   title: "Buy" | "Bought";
+  id: "buy" | "bought";
+  itemList: GroceryType[] | [];
 }
 
-export const Column = ({ children, title, ...other }: ColumnProps) => {
+export const Column = ({ title, itemList, id, ...other }: ColumnProps) => {
   const [inputError, setInputError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const list = useGrocery();
-  const { contextState, setContextState } = list;
+  const appState = useGrocery();
+  const { contextState, setContextState } = appState;
 
-  const handleAddClick = (arr: GroceryType[]) => {
-    setInputError("");
-    const inputValue = inputRef.current?.value;
+  console.log("itemList", itemList);
 
-    if (!inputValue) {
-      setInputError("Field should not be empty");
-      return;
-    }
+  // const handleAddClick = (arr: GroceryType[]) => {
+  //   setInputError("");
+  //   const inputValue = inputRef.current?.value;
 
-    if (arr.some((item) => item.id === inputValue.toLowerCase())) {
-      setInputError("Item name should be unique");
-      return;
-    }
+  //   if (!inputValue) {
+  //     setInputError("Field should not be empty");
+  //     return;
+  //   }
 
-    const newItem: GroceryType = {
-      name: capitalizeWord(inputValue),
-      id: inputValue.toLowerCase(),
-    };
+  //   if (arr.some((item) => item.id === inputValue.toLowerCase())) {
+  //     setInputError("Item name should be unique");
+  //     return;
+  //   }
 
-    const newArr = [...arr, newItem];
-    inputRef.current.value = "";
-    setContextState(newArr);
+  //   const newItem: GroceryType = {
+  //     name: capitalizeWord(inputValue),
+  //     id: inputValue.toLowerCase(),
+  //   };
 
-    return;
-  };
+  //   const newArr = [...arr, newItem];
+  //   inputRef.current.value = "";
+  //   setContextState(newArr);
 
+  //   return;
+  // };
   return (
-    <Box className={classes.root} {...other}>
+    <div className={classes.root} {...other}>
       <Box className={classes.columnHeader}>
         <IconGripVertical
           style={{ width: rem(20), height: rem(20), marginBlock: "auto" }}
@@ -71,9 +73,25 @@ export const Column = ({ children, title, ...other }: ColumnProps) => {
         </Text>
       </Box>
 
-      <Stack className={classes.columnItems} gap={14} pt={10} pb={10}>
-        {children}
-      </Stack>
+      <Droppable droppableId={id} type="columnList">
+        {(provided) => (
+          <div
+            className={classes.columnItems}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
+            {itemList.map((item, index) => (
+              <GroceryItem
+                key={item.id}
+                name={item.name}
+                index={index}
+                id={item.id}
+              />
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
       {title === "Buy" && (
         <Stack gap={inputError ? rem(32) : rem(16)}>
@@ -94,6 +112,6 @@ export const Column = ({ children, title, ...other }: ColumnProps) => {
           </UnstyledButton>
         </Stack>
       )}
-    </Box>
+    </div>
   );
 };

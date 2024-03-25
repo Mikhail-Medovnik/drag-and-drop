@@ -1,4 +1,4 @@
-import { GroceryType } from "@/context/GroceryContext/GroceryContext";
+import { GroceryType } from "@/components/GroceryItem/GroceryItem";
 
 interface ReorderArgs {
   array: GroceryType[];

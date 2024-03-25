@@ -1,91 +1,73 @@
 import { forwardRef, useRef, useState } from "react";
 import { Box, Container, rem } from "@mantine/core";
-import { Column } from "../Column/Column";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from "react-beautiful-dnd";
-import { GroceryType } from "@/context/GroceryContext/GroceryContext";
-import { GroceryItem } from "../GroceryItem/GroceryItem";
+import { Column, ColumnProps } from "../Column/Column";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { useGrocery } from "@/context/GroceryContext/GroceryContext";
 import { reorder } from "@/utils/reorder";
 
 import classes from "./Board.module.css";
+import { GroceryType } from "../GroceryItem/GroceryItem";
+import { InitialColumnsData } from "@/App";
 
 export function Board() {
   const context = useGrocery();
-  const { setContextState } = context;
-  const dragItems = context.contextState;
-
-  const draggableRef = useRef(null);
+  const { setContextState, contextState } = context;
+  const { buy, bought } = contextState;
 
   const handleDragAndDrop = (result: DropResult) => {
     const { source, destination, type } = result;
 
-    if (!destination) return;
+    if (!destination) return null;
 
     if (
       source.droppableId === destination.droppableId &&
-      source.index === destination.index
+      destination.index === source.index
     )
-      return;
+      return null;
 
-    if (type === "column") {
+    const start = contextState[source.droppableId as "buy" | "bought"];
+    const end = contextState[destination.droppableId as "buy" | "bought"];
+
+    if (start === end) {
       const reorderedList = reorder({
-        array: dragItems,
+        array: start.itemList,
         sourceIndex: source.index,
         destinationIndex: destination.index,
       });
 
-      return setContextState(reorderedList);
+      if (source.droppableId === "buy") {
+        const newBuy = { ...contextState["buy"], itemList: reorderedList };
+
+        const newState: InitialColumnsData = {
+          buy: newBuy,
+          bought: contextState["bought"],
+        };
+
+        console.log(newState);
+
+        setContextState(newState);
+      }
     }
+
+    return;
   };
 
-  const items = dragItems.map((item, index) => (
-    <Draggable draggableId={item.id} key={item.id} index={index}>
-      {(provided) => (
-        <div
-          {...provided.dragHandleProps}
-          {...provided.draggableProps}
-          ref={provided.innerRef}
-        >
-          <GroceryItem name={item.name} id={item.id} />
-        </div>
-      )}
-    </Draggable>
-  ));
+  const { ...columns } = contextState;
+  console.log(columns);
 
   return (
     <Container size={1440}>
       <DragDropContext onDragEnd={handleDragAndDrop}>
-        <Box className={classes.boardLayout}>
-          <Droppable droppableId="Buy" type="column">
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
-                <Column title="Buy" key="buy">
-                  {items}
-                  {provided.placeholder}
-                </Column>
-              </div>
-            )}
-          </Droppable>
-
-          <Droppable droppableId="bought" type="column">
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                style={{ minHeight: rem(200), height: "100%" }}
-              >
-                <Column title="Bought" key="bought">
-                  {provided.placeholder}
-                </Column>
-              </div>
-            )}
-          </Droppable>
-        </Box>
+        <div className={classes.boardLayout}>
+          {Object.values(columns).map((col: any) => (
+            <Column
+              title={col.title}
+              id={col.id}
+              itemList={col.itemList}
+              key={col.id}
+            />
+          ))}
+        </div>
       </DragDropContext>
     </Container>
   );

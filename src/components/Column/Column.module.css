@@ -19,6 +19,13 @@
   gap: rem(18);
 }
 
+.columnItems {
+  display: flex;
+  flex-direction: column;
+  padding-top: rem(10);
+  padding-bottom: rem(10);
+}
+
 .inputWrapper {
   height: 100%;
 }
