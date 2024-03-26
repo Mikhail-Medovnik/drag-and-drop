@@ -1,5 +1,5 @@
 import { Container } from "@mantine/core";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import { useGrocery } from "@/context/GroceryContext/GroceryContext";
 import { reorder } from "@/utils/reorder";
 import { moveItem } from "@/utils/move-item";
@@ -73,6 +73,19 @@ export function Board() {
       }
     }
 
+    if (type === "all-columns" && source.index !== destination.index) {
+      const contextCopy = { ...contextState };
+      const replacedColumns = Object.keys(contextCopy).reverse();
+      const newState = {
+        [replacedColumns[0]]:
+          contextCopy[replacedColumns[0] as "buy" | "bought"],
+        [replacedColumns[1]]:
+          contextCopy[replacedColumns[1] as "buy" | "bought"],
+      } as InitialColumnsData;
+
+      setContextState(newState);
+    }
+
     return;
   };
 
@@ -81,16 +94,30 @@ export function Board() {
   return (
     <Container size={1440}>
       <DragDropContext onDragEnd={handleDragAndDrop}>
-        <div className={classes.boardLayout}>
-          {Object.values(columns).map((col: any) => (
-            <Column
-              title={col.title}
-              id={col.id}
-              itemList={col.itemList}
-              key={col.id}
-            />
-          ))}
-        </div>
+        <Droppable
+          droppableId="all-columns"
+          direction="horizontal"
+          type="all-columns"
+        >
+          {(provided) => (
+            <div
+              className={classes.boardLayout}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {Object.values(columns).map((col: any, index: number) => (
+                <Column
+                  title={col.title}
+                  id={col.id}
+                  itemList={col.itemList}
+                  key={col.id}
+                  index={index}
+                />
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
       </DragDropContext>
     </Container>
   );

@@ -10,6 +10,7 @@
   background-color: #cfcfc4;
   border: none;
   border-radius: rem(16);
+  margin-inline: rem(25);
 }
 
 .columnHeader {

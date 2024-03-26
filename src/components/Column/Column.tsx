@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import {
   Box,
-  ListItem,
   Stack,
   Text,
   TextInput,
@@ -14,7 +13,7 @@ import { GroceryItem, GroceryType } from "../GroceryItem/GroceryItem";
 
 import classes from "./Column.module.css";
 import { capitalizeWord } from "@/utils/capitalize-word";
-import { Droppable } from "react-beautiful-dnd";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 
 export interface ColumnProps {
   title: "Buy" | "Bought";
@@ -22,7 +21,13 @@ export interface ColumnProps {
   itemList: GroceryType[] | [];
 }
 
-export const Column = ({ title, itemList, id, ...other }: ColumnProps) => {
+export const Column = ({
+  title,
+  itemList,
+  id,
+  index,
+  ...other
+}: ColumnProps & { index: number }) => {
   const [inputError, setInputError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const appState = useGrocery();
@@ -56,62 +61,77 @@ export const Column = ({ title, itemList, id, ...other }: ColumnProps) => {
     return;
   };
   return (
-    <div className={classes.root} {...other}>
-      <Box className={classes.columnHeader}>
-        <IconGripVertical
-          style={{ width: rem(20), height: rem(20), marginBlock: "auto" }}
-          stroke={1.5}
-        />
-        <Text
-          component="h3"
-          ta="center"
-          c="card-text-color"
-          fw={500}
-          fz={rem(24)}
+    <Draggable draggableId={id} index={index}>
+      {(provided) => (
+        <div
+          className={classes.root}
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+          {...other}
         >
-          {title}
-        </Text>
-      </Box>
-
-      <Droppable droppableId={id} type="columnList">
-        {(provided) => (
-          <div
-            className={classes.columnItems}
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {itemList.map((item, index) => (
-              <GroceryItem
-                key={item.id}
-                name={item.name}
-                index={index}
-                id={item.id}
+          <Box className={classes.columnHeader}>
+            <div {...provided.dragHandleProps}>
+              <IconGripVertical
+                style={{ width: rem(20), height: rem(20), marginTop: rem(10) }}
+                stroke={1.5}
               />
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+            </div>
 
-      {title === "Buy" && (
-        <Stack gap={inputError ? rem(32) : rem(16)}>
-          <TextInput
-            ref={inputRef}
-            h={rem(45)}
-            error={inputError || undefined}
-            placeholder="Add new item"
-            classNames={{ input: classes.input, wrapper: classes.inputWrapper }}
-          />
-          <UnstyledButton
-            className={classes.button}
-            onClick={() => {
-              handleAddClick(contextState.buy.itemList);
-            }}
-          >
-            Add
-          </UnstyledButton>
-        </Stack>
+            <Text
+              component="h3"
+              ta="center"
+              c="card-text-color"
+              fw={500}
+              fz={rem(24)}
+            >
+              {title}
+            </Text>
+          </Box>
+
+          <Droppable droppableId={id} type="columnList">
+            {(provided) => (
+              <div
+                className={classes.columnItems}
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {itemList.map((item, index) => (
+                  <GroceryItem
+                    key={item.id}
+                    name={item.name}
+                    index={index}
+                    id={item.id}
+                  />
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+
+          {title === "Buy" && (
+            <Stack gap={inputError ? rem(32) : rem(16)}>
+              <TextInput
+                ref={inputRef}
+                h={rem(45)}
+                error={inputError || undefined}
+                placeholder="Add new item"
+                classNames={{
+                  input: classes.input,
+                  wrapper: classes.inputWrapper,
+                }}
+              />
+              <UnstyledButton
+                className={classes.button}
+                onClick={() => {
+                  handleAddClick(contextState.buy.itemList);
+                }}
+              >
+                Add
+              </UnstyledButton>
+            </Stack>
+          )}
+        </div>
       )}
-    </div>
+    </Draggable>
   );
 };
