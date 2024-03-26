@@ -16,7 +16,7 @@ export function moveItem({
   const newSource = [...source];
   const [touchedItem] = newSource.splice(sourceIndex, 1);
   const newSourceWithoutTouched = newSource.filter(
-    (element) => element.id !== touchedItem.id
+    (element) => element.id !== touchedItem.id,
   );
   const newDestination = [...destination];
   newDestination.splice(destinationIndex, 0, touchedItem);

@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Box, Text, UnstyledButton } from "@mantine/core";
-import { IconTrash } from "@tabler/icons-react";
 import { Draggable } from "react-beautiful-dnd";
+import { IconTrash } from "@tabler/icons-react";
 import { useGrocery } from "@/context/GroceryContext/GroceryContext";
 import { InitialColumnsData } from "@/App";
 
@@ -21,16 +21,14 @@ export function GroceryItem({ name, id, index }: GroceryItemProps) {
   const { contextState, setContextState } = useGrocery();
 
   const removeItemHandler = (obj: InitialColumnsData) => {
-    // const stateKeys = Object.keys(obj);
-
     const clickedItem = itemRef.current?.getAttribute("data-item");
     const columnId = itemRef.current?.parentNode?.parentElement?.getAttribute(
-      "data-rbd-droppable-id"
+      "data-rbd-droppable-id",
     ) as "buy" | "bought";
 
     const shallow = { ...obj };
     const newItemList = shallow[columnId as keyof typeof obj].itemList.filter(
-      (item) => item.id !== clickedItem
+      (item) => item.id !== clickedItem,
     );
 
     shallow[columnId as keyof typeof obj].itemList = newItemList;

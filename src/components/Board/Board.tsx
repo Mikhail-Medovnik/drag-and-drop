@@ -11,7 +11,6 @@ import classes from "./Board.module.css";
 export function Board() {
   const context = useGrocery();
   const { setContextState, contextState } = context;
-  const { buy, bought } = contextState;
 
   const handleDragAndDrop = (result: DropResult) => {
     const { source, destination, type } = result;
