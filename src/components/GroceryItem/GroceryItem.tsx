@@ -1,8 +1,9 @@
 import { useRef } from "react";
 import { Box, Text, UnstyledButton } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { useGrocery } from "@/context/GroceryContext/GroceryContext";
 import { Draggable } from "react-beautiful-dnd";
+import { useGrocery } from "@/context/GroceryContext/GroceryContext";
+import { InitialColumnsData } from "@/App";
 
 import classes from "./GroceryItem.module.css";
 
@@ -19,11 +20,24 @@ export function GroceryItem({ name, id, index }: GroceryItemProps) {
   const itemRef = useRef<HTMLDivElement>(null);
   const { contextState, setContextState } = useGrocery();
 
-  // const removeItemHandler = (arr: GroceryType[]) => {
-  //   const shallow = [...arr];
-  //   const clickedItem = itemRef.current?.getAttribute("data-item");
-  //   return setContextState(shallow.filter((item) => item.id !== clickedItem));
-  // };
+  const removeItemHandler = (obj: InitialColumnsData) => {
+    // const stateKeys = Object.keys(obj);
+
+    const clickedItem = itemRef.current?.getAttribute("data-item");
+    const columnId = itemRef.current?.parentNode?.parentElement?.getAttribute(
+      "data-rbd-droppable-id"
+    ) as "buy" | "bought";
+
+    const shallow = { ...obj };
+    const newItemList = shallow[columnId as keyof typeof obj].itemList.filter(
+      (item) => item.id !== clickedItem
+    );
+
+    shallow[columnId as keyof typeof obj].itemList = newItemList;
+    const newState = { ...shallow };
+    setContextState(newState);
+    return;
+  };
 
   return (
     <Draggable draggableId={id} index={index} key={id}>
@@ -37,7 +51,7 @@ export function GroceryItem({ name, id, index }: GroceryItemProps) {
             <Text>{name}</Text>
             <UnstyledButton
               className={classes.removeButton}
-              // onClick={() => removeItemHandler(contextState)}
+              onClick={() => removeItemHandler(contextState)}
             >
               {<IconTrash stroke={1.5} className={classes.trashIcon} />}
             </UnstyledButton>

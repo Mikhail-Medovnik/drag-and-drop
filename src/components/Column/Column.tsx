@@ -28,33 +28,33 @@ export const Column = ({ title, itemList, id, ...other }: ColumnProps) => {
   const appState = useGrocery();
   const { contextState, setContextState } = appState;
 
-  console.log("itemList", itemList);
+  const handleAddClick = (arr: GroceryType[]) => {
+    setInputError("");
+    const inputValue = inputRef.current?.value;
 
-  // const handleAddClick = (arr: GroceryType[]) => {
-  //   setInputError("");
-  //   const inputValue = inputRef.current?.value;
+    if (!inputValue) {
+      setInputError("Field should not be empty");
+      return;
+    }
 
-  //   if (!inputValue) {
-  //     setInputError("Field should not be empty");
-  //     return;
-  //   }
+    if (arr.some((item) => item.id === inputValue.toLowerCase())) {
+      setInputError("Item name should be unique");
+      return;
+    }
 
-  //   if (arr.some((item) => item.id === inputValue.toLowerCase())) {
-  //     setInputError("Item name should be unique");
-  //     return;
-  //   }
+    const newItem: GroceryType = {
+      name: capitalizeWord(inputValue),
+      id: inputValue.toLowerCase(),
+    };
 
-  //   const newItem: GroceryType = {
-  //     name: capitalizeWord(inputValue),
-  //     id: inputValue.toLowerCase(),
-  //   };
+    const newArr = [...arr, newItem];
+    inputRef.current.value = "";
+    const newState = { ...contextState };
+    newState.buy.itemList = newArr;
+    setContextState(newState);
 
-  //   const newArr = [...arr, newItem];
-  //   inputRef.current.value = "";
-  //   setContextState(newArr);
-
-  //   return;
-  // };
+    return;
+  };
   return (
     <div className={classes.root} {...other}>
       <Box className={classes.columnHeader}>
@@ -105,7 +105,7 @@ export const Column = ({ title, itemList, id, ...other }: ColumnProps) => {
           <UnstyledButton
             className={classes.button}
             onClick={() => {
-              handleAddClick(contextState);
+              handleAddClick(contextState.buy.itemList);
             }}
           >
             Add
